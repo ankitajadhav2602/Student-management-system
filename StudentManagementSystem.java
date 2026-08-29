@@ -20,7 +20,15 @@ public class StudentManagementSystem {
 
             System.out.print("Enter your choice: ");
 
-            int choice = scanner.nextInt();
+            int choice;
+
+            try {
+                choice = scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("Please enter a number between 1 and 6.");
+                scanner.nextLine();
+                continue;
+            }
 
             switch (choice) {
 
@@ -60,18 +68,41 @@ public static void addStudent() {
     System.out.print("Enter Student ID: ");
     int id = scanner.nextInt();
 
+    // Check duplicate ID
+    for (Student student : students) {
+        if (student.getId() == id) {
+            System.out.println("Student ID already exists!");
+            return;
+        }
+    }
+
     scanner.nextLine();
 
     System.out.print("Enter Student Name: ");
     String name = scanner.nextLine();
 
+    if (name.trim().isEmpty()) {
+        System.out.println("Name cannot be empty!");
+        return;
+    }
+
     System.out.print("Enter Age: ");
     int age = scanner.nextInt();
+
+    if (age <= 0 || age > 100) {
+        System.out.println("Please enter a valid age!");
+        return;
+    }
 
     scanner.nextLine();
 
     System.out.print("Enter Course: ");
     String course = scanner.nextLine();
+
+    if (course.trim().isEmpty()) {
+        System.out.println("Course cannot be empty!");
+        return;
+    }
 
     Student student = new Student(id, name, age, course);
 
@@ -150,11 +181,11 @@ public static void deleteStudent() {
     System.out.print("Enter Student ID: ");
     int id = scanner.nextInt();
 
-    for (Student student : students) {
+    for (int i = 0; i < students.size(); i++) {
 
-        if (student.getId() == id) {
+        if (students.get(i).getId() == id) {
 
-            students.remove(student);
+            students.remove(i);
 
             System.out.println("Student deleted successfully!");
             return;
@@ -163,4 +194,5 @@ public static void deleteStudent() {
 
     System.out.println("Student not found.");
 }
+
 }
