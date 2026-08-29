@@ -1,12 +1,17 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class StudentManagementSystem {
 
     static ArrayList<Student> students = new ArrayList<>();
     static Scanner scanner = new Scanner(System.in);
+    static final String FILE_NAME="Students.txt";
 
     public static void main(String[] args) {
+        loadStudents();
 
         while (true) {
 
@@ -108,6 +113,8 @@ public static void addStudent() {
 
     students.add(student);
 
+    saveStudents();
+
     System.out.println("Student added successfully!");
 }
 
@@ -168,6 +175,8 @@ public static void updateStudent() {
             student.setAge(age);
             student.setCourse(course);
 
+            saveStudents();
+
             System.out.println("Student updated successfully!");
             return;
         }
@@ -187,6 +196,8 @@ public static void deleteStudent() {
 
             students.remove(i);
 
+            saveStudents();
+
             System.out.println("Student deleted successfully!");
             return;
         }
@@ -195,4 +206,65 @@ public static void deleteStudent() {
     System.out.println("Student not found.");
 }
 
+public static void saveStudents() {
+
+    try {
+        FileWriter writer = new FileWriter(FILE_NAME);
+
+        for (Student student : students) {
+
+            writer.write(
+                student.getId() + "," +
+                student.getName() + "," +
+                student.getAge() + "," +
+                student.getCourse() + "\n"
+            );
+        }
+
+        writer.close();
+
+        System.out.println("Student data saved successfully.");
+
+    } catch (IOException e) {
+
+        System.out.println("Error saving student data.");
+    }
+}
+public static void loadStudents() {
+
+    File file = new File(FILE_NAME);
+
+    if (!file.exists()) {
+        return;
+    }
+
+    try {
+        Scanner fileScanner = new Scanner(file);
+
+        while (fileScanner.hasNextLine()) {
+
+            String line = fileScanner.nextLine();
+
+            String[] data = line.split(",");
+
+            if (data.length == 4) {
+
+                int id = Integer.parseInt(data[0]);
+                String name = data[1];
+                int age = Integer.parseInt(data[2]);
+                String course = data[3];
+
+                Student student = new Student(id, name, age, course);
+
+                students.add(student);
+            }
+        }
+
+        fileScanner.close();
+
+    } catch (Exception e) {
+
+        System.out.println("Error loading student data.");
+    }
+}
 }
